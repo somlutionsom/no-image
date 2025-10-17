@@ -19,26 +19,25 @@ html, body {
   cursor: pointer;
 }
 
-/* 외부 다크 사각형 - blur 없음 */
+/* 외부 사각형 - blur 없음, 테마 색상 적용 */
 .dialogue-outer {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(20, 20, 20, 0.95);
   border-radius: 12px;
   z-index: 1;
 }
 
-/* 내부 약간 밝은 사각형 - blur 적용 */
+/* 내부 사각형 - 80% 크기, 어두운 색상, 높은 blur */
 .dialogue-inner {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
-  background: rgba(50, 50, 50, 0.9);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);  /* 중앙 정렬 */
+  width: 80%;                        /* 80% 크기 (60% + 20%) */
+  height: 60%;                       /* 높이는 60% 유지 */
   border-radius: 8px;
-  filter: blur(2px);  /* 내부 사각형만 blur */
+  filter: blur(8px);                 /* blur 값 증가 (2px → 8px) */
   z-index: 2;
 }
 
@@ -62,7 +61,7 @@ html, body {
   text-overflow: ellipsis;
 }
 
-/* 우측 하단 삼각형 (▼) - 위아래 움직임 + 깜빡임 */
+/* 우측 하단 삼각형 (▼) - 위아래 움직임 + 깜빡임 + 클릭 가능 */
 .dialogue-triangle {
   position: absolute;
   bottom: 12px;
@@ -71,9 +70,19 @@ html, body {
   height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 9px solid currentColor;
+  border-top: 9px solid white;  /* 기본 흰색, inline style로 테마 적용 */
   z-index: 4;
+  cursor: pointer;              /* 클릭 가능 표시 */
   animation: triangle-float 2s ease-in-out infinite, triangle-blink 1.2s ease-in-out infinite;
+  transition: transform 0.2s;   /* 클릭 효과 */
+}
+
+.dialogue-triangle:hover {
+  filter: brightness(1.2);      /* 호버 시 약간 밝게 */
+}
+
+.dialogue-triangle:active {
+  transform: scale(0.9) translateY(0px);  /* 클릭 시 살짝 작아짐 */
 }
 
 /* 삼각형 위아래 움직임 */

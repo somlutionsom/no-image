@@ -7,6 +7,8 @@ import './dialogue.css'
 interface ThemeConfig {
   text: string
   triangle: string
+  outerBg: string      // 외부 사각형 색상
+  innerBg: string      // 내부 사각형 색상 (더 밝게)
 }
 
 interface WidgetData {
@@ -15,20 +17,28 @@ interface WidgetData {
 
 const THEME_COLORS: Record<string, ThemeConfig> = {
   pink: {
-    text: '#FFB9D9',
-    triangle: '#FFB9D9'
+    text: '#FFFFFF',              // 흰색 고정
+    triangle: '#FFFFFF',          // 흰색 고정
+    outerBg: 'rgba(255, 185, 217, 0.8)',    // 파스텔 핑크 (외부)
+    innerBg: 'rgba(255, 150, 200, 0.8)'     // 더 어두운 핑크 (내부, opacity 80%)
   },
   purple: {
-    text: '#D4B5FF',
-    triangle: '#D4B5FF'
+    text: '#FFFFFF',              // 흰색 고정
+    triangle: '#FFFFFF',          // 흰색 고정
+    outerBg: 'rgba(212, 181, 255, 0.8)',    // 파스텔 퍼플 (외부)
+    innerBg: 'rgba(180, 140, 255, 0.8)'     // 더 어두운 퍼플 (내부, opacity 80%)
   },
   blue: {
-    text: '#B5D4FF',
-    triangle: '#B5D4FF'
+    text: '#FFFFFF',              // 흰색 고정
+    triangle: '#FFFFFF',          // 흰색 고정
+    outerBg: 'rgba(181, 212, 255, 0.8)',    // 파스텔 블루 (외부)
+    innerBg: 'rgba(140, 180, 255, 0.8)'     // 더 어두운 블루 (내부, opacity 80%)
   },
   mono: {
-    text: '#FFFFFF',
-    triangle: '#FFFFFF'
+    text: '#FFFFFF',              // 흰색 고정
+    triangle: '#FFFFFF',          // 흰색 고정
+    outerBg: 'rgba(100, 100, 100, 0.8)',    // 회색 (외부)
+    innerBg: 'rgba(120, 120, 120, 0.8)'     // 더 어두운 회색 (내부, opacity 80%)
   }
 }
 
@@ -114,6 +124,43 @@ function DialogueContent() {
     }
   }, [])
 
+  // 랜덤 칭찬 불러오기
+  const fetchRandomPraise = useCallback(async () => {
+    if (!config) return
+
+    try {
+      const response = await fetch('/api/notion/random-praise', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: config.token,
+          databaseId: config.databaseId
+        }),
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const result = await response.json()
+      
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      // 랜덤 칭찬으로 업데이트
+      setData(prev => ({
+        ...prev,
+        dialogueText: result.praise || '오늘도 화이팅!'
+      }))
+    } catch (err: any) {
+      console.error('Random praise fetch error:', err)
+    }
+  }, [config])
+
   // 테마 변경
   const cycleTheme = useCallback(() => {
     const themes = Object.keys(THEME_COLORS)
@@ -157,13 +204,19 @@ function DialogueContent() {
         onClick={cycleTheme}
         title="클릭하여 테마 변경"
       >
-        {/* 외부 다크 박스 */}
-        <div className="dialogue-outer"></div>
+        {/* 외부 박스 - 테마 색상 */}
+        <div 
+          className="dialogue-outer"
+          style={{ background: theme.outerBg }}
+        ></div>
         
-        {/* 내부 밝은 박스 */}
-        <div className="dialogue-inner"></div>
+        {/* 내부 밝은 박스 - 더 밝은 테마 색상 + blur */}
+        <div 
+          className="dialogue-inner"
+          style={{ background: theme.innerBg }}
+        ></div>
         
-        {/* 텍스트 내용 */}
+        {/* 텍스트 내용 - 흰색 고정 */}
         <div 
           className="dialogue-content"
           style={{ color: theme.text }}
@@ -181,10 +234,15 @@ function DialogueContent() {
           )}
         </div>
         
-        {/* 우측 하단 삼각형 */}
+        {/* 우측 하단 삼각형 - 흰색 고정, 클릭 시 랜덤 칭찬 */}
         <div 
           className="dialogue-triangle"
-          style={{ color: theme.triangle }}
+          style={{ borderTopColor: theme.triangle }}
+          onClick={(e) => {
+            e.stopPropagation()  // 테마 변경 이벤트 방지
+            fetchRandomPraise()
+          }}
+          title="클릭하여 다른 칭찬 보기"
         ></div>
       </div>
     </div>
