@@ -51,7 +51,7 @@ export default function WidgetPreview({ config, urls }: WidgetPreviewProps) {
         </div>
       </div>
 
-      {/* 대화창 위젯 미리보기 */}
+      {/* 칭찬 위젯 미리보기 */}
       <div className="bg-white rounded-lg p-4 window-frame">
         <div className="border-b-2 border-gray-200 pb-2 mb-3">
           <div className="flex justify-between items-center">
@@ -60,7 +60,7 @@ export default function WidgetPreview({ config, urls }: WidgetPreviewProps) {
               <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
               <div className="w-3 h-3 rounded-full bg-green-400"></div>
             </div>
-            <span className="text-xs text-purple-600 font-bold">💬 대화창 위젯</span>
+            <span className="text-xs text-purple-600 font-bold">💬 칭찬 위젯</span>
           </div>
         </div>
         

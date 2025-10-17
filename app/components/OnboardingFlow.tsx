@@ -186,18 +186,6 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             </select>
           </div>
 
-          <div className="bg-yellow-50 border-2 border-yellow-200 p-3 rounded-md">
-            <p className="text-xs text-yellow-800">
-              ⚠️ 데이터베이스에 다음 속성이 필요합니다:
-            </p>
-            <ul className="text-xs mt-1 space-y-0.5 text-yellow-700">
-              <li>• profile image (Files & media)</li>
-              <li>• sleep (Formula)</li>
-              <li>• energy (Number)</li>
-              <li>• name (Text)</li>
-              <li>• main text (Text)</li>
-            </ul>
-          </div>
 
           <div className="flex gap-2">
             <button
@@ -251,10 +239,10 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             </div>
           </div>
 
-          {/* 대화창 위젯 URL */}
+          {/* 칭찬 위젯 URL */}
           <div className="border-2 border-purple-200 bg-purple-50 p-4 rounded-lg">
             <label className="block text-sm font-bold mb-2 text-purple-600">
-              💬 2. 대화창 위젯
+              💬 2. 칭찬 위젯
             </label>
             <div className="bg-white p-3 rounded-md break-all mb-3">
               <code className="text-xs">{widgetUrls.dialogue}</code>

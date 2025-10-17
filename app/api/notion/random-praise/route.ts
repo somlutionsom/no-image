@@ -9,7 +9,7 @@ const corsHeaders = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, databaseId } = await req.json()
+    const { token, databaseId, excludePraise } = await req.json()
 
     if (!token || !databaseId) {
       return NextResponse.json(
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       page_size: 10  // 10개로 줄여서 속도 향상
     })
 
-    // 칭찬 속성이 있는 항목들만 필터링
+    // 칭찬 속성이 있는 항목들만 필터링 (마지막 칭찬 제외)
     const praiseList: string[] = []
     
     for (const page of response.results) {
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       
       if (props['칭찬']?.rich_text?.[0]?.plain_text) {
         const praise = props['칭찬'].rich_text[0].plain_text
-        if (praise && praise.trim() !== '') {
+        if (praise && praise.trim() !== '' && praise !== excludePraise) {
           praiseList.push(praise)
         }
       }
@@ -49,6 +49,13 @@ export async function POST(req: NextRequest) {
 
     // 칭찬 항목이 없으면 기본 메시지
     if (praiseList.length === 0) {
+      // 제외된 칭찬만 있는 경우, 다시 포함시켜서 선택
+      if (excludePraise) {
+        return NextResponse.json(
+          { praise: excludePraise },  // 어쩔 수 없이 같은 칭찬 반환
+          { headers: corsHeaders }
+        )
+      }
       return NextResponse.json(
         { praise: '오늘도 화이팅!' },
         { headers: corsHeaders }

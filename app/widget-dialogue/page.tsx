@@ -13,6 +13,7 @@ interface ThemeConfig {
 
 interface WidgetData {
   mainText: string
+  dialogueText?: string
 }
 
 const THEME_COLORS: Record<string, ThemeConfig> = {
@@ -50,6 +51,7 @@ function DialogueContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [praiseLoading, setPraiseLoading] = useState(false)  // 칭찬 로딩 상태
+  const [lastPraise, setLastPraise] = useState<string>('')   // 마지막 칭찬 기억
 
   const theme = THEME_COLORS[currentTheme]
 
@@ -83,6 +85,7 @@ function DialogueContent() {
       setError('설정 정보 오류')
       setLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   const fetchData = useCallback(async (cfg: any) => {
@@ -113,10 +116,13 @@ function DialogueContent() {
       }
 
       // 칭찬 데이터 사용, 없으면 mainText 사용
+      const initialText = result.praise || result.mainText || '오늘도 화이팅!'
       setData({
         ...result,
-        dialogueText: result.praise || result.mainText || '오늘도 화이팅!'
+        dialogueText: initialText
       })
+      // 초기 칭찬도 lastPraise에 저장
+      setLastPraise(initialText)
     } catch (err: any) {
       console.error('Fetch error:', err)
       setError(err.message || '데이터를 불러올 수 없습니다')
@@ -125,7 +131,7 @@ function DialogueContent() {
     }
   }, [])
 
-  // 랜덤 칭찬 불러오기 (로딩 상태 추가)
+  // 랜덤 칭찬 불러오기 (중복 방지)
   const fetchRandomPraise = useCallback(async () => {
     if (!config || praiseLoading) return  // 이미 로딩 중이면 중복 요청 방지
 
@@ -133,7 +139,7 @@ function DialogueContent() {
     
     try {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3000)  // 3초 타임아웃 (속도 개선)
+      const timeoutId = setTimeout(() => controller.abort(), 3000)  // 3초 타임아웃
 
       const response = await fetch('/api/notion/random-praise', {
         method: 'POST',
@@ -142,7 +148,8 @@ function DialogueContent() {
         },
         body: JSON.stringify({
           token: config.token,
-          databaseId: config.databaseId
+          databaseId: config.databaseId,
+          excludePraise: lastPraise  // 마지막 칭찬 제외
         }),
         credentials: 'include',
         signal: controller.signal,
@@ -160,11 +167,17 @@ function DialogueContent() {
         throw new Error(result.error)
       }
 
+      const newPraise = result.praise || '오늘도 화이팅!'
+      
       // 랜덤 칭찬으로 업데이트
       setData(prev => ({
         ...prev,
-        dialogueText: result.praise || '오늘도 화이팅!'
+        dialogueText: newPraise
       }))
+      
+      // 마지막 칭찬 기억
+      setLastPraise(newPraise)
+      
     } catch (err: any) {
       console.error('Random praise fetch error:', err)
       // 에러 시에도 사용자에게 피드백
@@ -177,7 +190,7 @@ function DialogueContent() {
     } finally {
       setPraiseLoading(false)  // 로딩 종료
     }
-  }, [config, praiseLoading])
+  }, [config, praiseLoading, lastPraise])
 
   // 테마 변경
   const cycleTheme = useCallback(() => {
