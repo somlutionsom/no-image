@@ -449,6 +449,18 @@ function WidgetContent() {
 
   const theme = useMemo(() => THEME_COLORS[currentTheme], [currentTheme])
 
+  // 테마별 window 배경 이미지 반환 함수
+  const getThemedWindow = useCallback(() => {
+    const windowMap: Record<string, string> = {
+      'pink': 'pink_window.png',
+      'purple': 'purple_window.png',
+      'blue': 'blue_window.png',
+      'mono': 'mono_window.png'
+    }
+    
+    return `/images/${windowMap[currentTheme] || 'window.png'}`
+  }, [currentTheme])
+
   // 테마별 아이콘 경로 반환 함수
   const getThemedIcon = useCallback((iconName: string) => {
     const themePrefix: Record<string, string> = {
@@ -492,7 +504,7 @@ function WidgetContent() {
         onClick={cycleTheme}
         style={{ 
           fontFamily: 'Galmuri7, Galmuri, monospace',
-          backgroundImage: 'url(/images/window.png)',
+          backgroundImage: `url(${getThemedWindow()})`,
           backgroundSize: '350px 450px',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
