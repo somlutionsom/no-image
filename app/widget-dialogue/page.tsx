@@ -49,6 +49,7 @@ function DialogueContent() {
   const [currentTheme, setCurrentTheme] = useState('pink')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [praiseLoading, setPraiseLoading] = useState(false)  // 칭찬 로딩 상태
 
   const theme = THEME_COLORS[currentTheme]
 
@@ -124,11 +125,16 @@ function DialogueContent() {
     }
   }, [])
 
-  // 랜덤 칭찬 불러오기
+  // 랜덤 칭찬 불러오기 (로딩 상태 추가)
   const fetchRandomPraise = useCallback(async () => {
-    if (!config) return
+    if (!config || praiseLoading) return  // 이미 로딩 중이면 중복 요청 방지
 
+    setPraiseLoading(true)  // 로딩 시작
+    
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)  // 3초 타임아웃 (속도 개선)
+
       const response = await fetch('/api/notion/random-praise', {
         method: 'POST',
         headers: {
@@ -139,7 +145,10 @@ function DialogueContent() {
           databaseId: config.databaseId
         }),
         credentials: 'include',
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
@@ -158,8 +167,17 @@ function DialogueContent() {
       }))
     } catch (err: any) {
       console.error('Random praise fetch error:', err)
+      // 에러 시에도 사용자에게 피드백
+      if (err.name === 'AbortError') {
+        setData(prev => ({
+          ...prev,
+          dialogueText: '네트워크가 느려요 😅'
+        }))
+      }
+    } finally {
+      setPraiseLoading(false)  // 로딩 종료
     }
-  }, [config])
+  }, [config, praiseLoading])
 
   // 테마 변경
   const cycleTheme = useCallback(() => {
@@ -227,6 +245,8 @@ function DialogueContent() {
             </div>
           ) : error ? (
             <span>⚠️ {error}</span>
+          ) : praiseLoading ? (
+            <span className="animate-pulse">💬 칭찬 불러오는 중...</span>
           ) : data ? (
             <span>{data.dialogueText || '오늘도 화이팅!'}</span>
           ) : (
@@ -237,12 +257,15 @@ function DialogueContent() {
         {/* 우측 하단 삼각형 - 흰색 고정, 클릭 시 랜덤 칭찬 */}
         <div 
           className="dialogue-triangle"
-          style={{ borderTopColor: theme.triangle }}
+          style={{ 
+            borderTopColor: theme.triangle,
+            opacity: praiseLoading ? 0.5 : 1  // 로딩 중 반투명
+          }}
           onClick={(e) => {
             e.stopPropagation()  // 테마 변경 이벤트 방지
             fetchRandomPraise()
           }}
-          title="클릭하여 다른 칭찬 보기"
+          title={praiseLoading ? '로딩 중...' : '클릭하여 다른 칭찬 보기'}
         ></div>
       </div>
     </div>

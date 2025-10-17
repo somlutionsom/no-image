@@ -20,14 +20,14 @@ export async function POST(req: NextRequest) {
 
     const notion = new Client({ auth: token })
 
-    // 최근 데이터 조회 (칭찬 속성이 있는 항목들)
+    // 최근 10개만 조회 (속도 개선: 50개 → 10개)
     const response = await notion.databases.query({
       database_id: databaseId,
       sorts: [{
         property: 'Date',
         direction: 'descending'
       }],
-      page_size: 50  // 최근 50개 중에서 랜덤으로 선택
+      page_size: 10  // 10개로 줄여서 속도 향상
     })
 
     // 칭찬 속성이 있는 항목들만 필터링
@@ -42,6 +42,9 @@ export async function POST(req: NextRequest) {
           praiseList.push(praise)
         }
       }
+      
+      // 5개 이상 찾으면 조기 종료 (속도 최적화)
+      if (praiseList.length >= 5) break
     }
 
     // 칭찬 항목이 없으면 기본 메시지
