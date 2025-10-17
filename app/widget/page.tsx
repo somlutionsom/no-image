@@ -33,42 +33,42 @@ type LogEntry = {
 
 const THEME_COLORS: Record<string, ThemeConfig> = {
   pink: {
-    bg: '#FFCEE4',
+    bg: 'transparent',
     accent: '#FFB9D9',
     text: '#2C2C2C',
     border: '#FFB9D9',
     secondary: '#FFE5F0'
   },
   purple: {
-    bg: '#E8D5FF',
+    bg: 'transparent',
     accent: '#D4B5FF',
     text: '#2C2C2C',
     border: '#D4B5FF',
     secondary: '#F3F3F3'
   },
   blue: {
-    bg: '#D5E8FF',
+    bg: 'transparent',
     accent: '#B5D4FF',
     text: '#2C2C2C',
     border: '#B5D4FF',
     secondary: '#F3F3F3'
   },
   mono: {
-    bg: '#4C4C4C',
+    bg: 'transparent',
     accent: '#404040',
     text: '#000000',
     border: '#404040',
     secondary: '#E0E0E0'
   },
   'pastel-blue': {
-    bg: '#E6F3FF',
+    bg: 'transparent',
     accent: '#B3D9FF',
     text: '#2C2C2C',
     border: '#B3D9FF',
     secondary: '#F0F8FF'
   },
   'pastel-purple': {
-    bg: '#F0E6FF',
+    bg: 'transparent',
     accent: '#D9B3FF',
     text: '#2C2C2C',
     border: '#D9B3FF',
