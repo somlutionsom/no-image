@@ -34,10 +34,10 @@ type LogEntry = {
 const THEME_COLORS: Record<string, ThemeConfig> = {
   pink: {
     bg: 'transparent',
-    accent: '#D9B3FF',
+    accent: '#FFB9D9',
     text: '#2C2C2C',
-    border: '#D9B3FF',
-    secondary: '#F8F0FF'
+    border: '#FFB9D9',
+    secondary: '#FFE5F0'
   },
   purple: {
     bg: 'transparent',
@@ -464,7 +464,7 @@ function WidgetContent() {
   // 테마별 아이콘 경로 반환 함수
   const getThemedIcon = useCallback((iconName: string) => {
     const themePrefix: Record<string, string> = {
-      'pink': 'purple_',
+      'pink': '',  // 기본 이미지 사용 (battery.png, moon.png)
       'purple': 'purple_',
       'blue': 'blue_',
       'mono': 'black_'
@@ -505,7 +505,7 @@ function WidgetContent() {
         style={{ 
           fontFamily: 'Galmuri7, Galmuri, monospace',
           backgroundImage: `url(${getThemedWindow()})`,
-          backgroundSize: '350px 450px',
+          backgroundSize: '420px 540px',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
           backgroundColor: 'transparent',
