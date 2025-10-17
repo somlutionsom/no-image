@@ -171,7 +171,7 @@ function DialogueContent() {
       
       // 랜덤 칭찬으로 업데이트
       setData(prev => ({
-        ...prev,
+        mainText: prev?.mainText || '',
         dialogueText: newPraise
       }))
       
@@ -183,7 +183,7 @@ function DialogueContent() {
       // 에러 시에도 사용자에게 피드백
       if (err.name === 'AbortError') {
         setData(prev => ({
-          ...prev,
+          mainText: prev?.mainText || '',
           dialogueText: '네트워크가 느려요 😅'
         }))
       }
