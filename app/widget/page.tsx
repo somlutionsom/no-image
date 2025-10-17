@@ -115,10 +115,14 @@ const appendLog = (
   setLogs: React.Dispatch<React.SetStateAction<LogEntry[]>>,
   entry: Omit<LogEntry, 'id'>
 ) => {
-  const id = `${entry.timestamp}-${Math.random().toString(36).slice(2)}`
-  const newEntry: LogEntry = { ...entry, id }
-  logsRef.current = [...logsRef.current.slice(-MAX_LOG_ENTRIES + 1), newEntry]
-  setLogs(logsRef.current)
+  // 무한 루프 방지: 로깅 비활성화
+  // 디버그가 필요한 경우 이 함수를 다시 활성화
+  return
+  
+  // const id = `${entry.timestamp}-${Math.random().toString(36).slice(2)}`
+  // const newEntry: LogEntry = { ...entry, id }
+  // logsRef.current = [...logsRef.current.slice(-MAX_LOG_ENTRIES + 1), newEntry]
+  // setLogs(logsRef.current)
 }
 
 const sendRemoteLog = async (payload: LogEntry) => {
