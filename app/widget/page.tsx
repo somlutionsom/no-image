@@ -570,8 +570,21 @@ function WidgetContent() {
             data-testid="time-badge"
             style={{ 
               backgroundColor: theme.secondary,
-              color: theme.text 
+              color: theme.text,
+              cursor: 'pointer'
             }}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (config) {
+                appendLog(logsRef, setLogs, {
+                  timestamp: Date.now(),
+                  level: 'info',
+                  message: '타임 뱃지 클릭 - 새로고침',
+                })
+                fetchData(config)
+              }
+            }}
+            title="클릭하여 새로고침"
           >
             {currentTime}
           </div>
