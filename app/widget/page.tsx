@@ -230,7 +230,7 @@ function WidgetContent() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config])
+  }, []) // 최초 마운트 시에만 실행 (무한 루프 방지)
 
   useEffect(() => {
     const timer = setInterval(() => {
