@@ -7,6 +7,7 @@ interface WidgetData {
   energy: number
   name: string
   mainText: string
+  praise?: string  // 칭찬 속성 추가
 }
 
 const corsHeaders = {
@@ -97,10 +98,11 @@ export async function POST(req: NextRequest) {
       page_size: 10  // 최근 10개 중에서 데이터가 있는 것 찾기
     })
     
-    // 프로필 사진, 닉네임, 텍스트는 최근 데이터에서 찾기
+    // 프로필 사진, 닉네임, 텍스트, 칭찬은 최근 데이터에서 찾기
     let profileImage = null
     let name = 'Anonymous'
     let mainText = '오늘도 좋은 하루!'
+    let praise = '오늘도 화이팅!'
     
     for (const page of recentResponse.results) {
       const props = (page as any).properties
@@ -118,8 +120,13 @@ export async function POST(req: NextRequest) {
         mainText = props['main text'].rich_text[0].plain_text
       }
       
+      // 칭찬 속성 가져오기
+      if (praise === '오늘도 화이팅!' && props['칭찬']?.rich_text?.[0]?.plain_text) {
+        praise = props['칭찬'].rich_text[0].plain_text
+      }
+      
       // 모든 데이터를 찾았으면 중단
-      if (profileImage && name !== 'Anonymous' && mainText !== '오늘도 좋은 하루!') {
+      if (profileImage && name !== 'Anonymous' && mainText !== '오늘도 좋은 하루!' && praise !== '오늘도 화이팅!') {
         break
       }
     }
@@ -149,7 +156,8 @@ export async function POST(req: NextRequest) {
       sleep,
       energy,
       name,
-      mainText
+      mainText,
+      praise  // 칭찬 데이터 추가
     }
     
     return NextResponse.json(data, { headers: corsHeaders })

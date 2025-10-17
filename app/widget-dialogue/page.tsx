@@ -101,7 +101,11 @@ function DialogueContent() {
         throw new Error(result.error)
       }
 
-      setData(result)
+      // 칭찬 데이터 사용, 없으면 mainText 사용
+      setData({
+        ...result,
+        dialogueText: result.praise || result.mainText || '오늘도 화이팅!'
+      })
     } catch (err: any) {
       console.error('Fetch error:', err)
       setError(err.message || '데이터를 불러올 수 없습니다')
@@ -171,7 +175,7 @@ function DialogueContent() {
           ) : error ? (
             <span>⚠️ {error}</span>
           ) : data ? (
-            <span>{data.mainText || '오늘도 화이팅!'}</span>
+            <span>{data.dialogueText || '오늘도 화이팅!'}</span>
           ) : (
             <span>데이터 없음</span>
           )}

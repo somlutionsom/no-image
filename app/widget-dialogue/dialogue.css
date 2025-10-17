@@ -11,49 +11,25 @@ html, body {
   width: 100vw;
 }
 
-/* 대화창 컨테이너 */
+/* 대화창 컨테이너 - 고정 */
 .dialogue-container {
   width: 280px;
   height: 100px;
   position: relative;
-  animation: dialogue-float 3s ease-in-out infinite;
   cursor: pointer;
 }
 
-/* 스탑-홀드 키프레임 애니메이션 (위아래 떠다니기) */
-@keyframes dialogue-float {
-  0% {
-    transform: translateY(0px);
-  }
-  20% {
-    transform: translateY(0px);    /* 홀드 */
-  }
-  40% {
-    transform: translateY(-10px);   /* 위로 이동 */
-  }
-  60% {
-    transform: translateY(-10px);   /* 홀드 */
-  }
-  80% {
-    transform: translateY(0px);    /* 다시 원위치 */
-  }
-  100% {
-    transform: translateY(0px);    /* 홀드 */
-  }
-}
-
-/* 외부 다크 사각형 */
+/* 외부 다크 사각형 - blur 없음 */
 .dialogue-outer {
   position: absolute;
   width: 100%;
   height: 100%;
   background: rgba(20, 20, 20, 0.95);
   border-radius: 12px;
-  filter: blur(3px);
   z-index: 1;
 }
 
-/* 내부 약간 밝은 사각형 */
+/* 내부 약간 밝은 사각형 - blur 적용 */
 .dialogue-inner {
   position: absolute;
   top: 5px;
@@ -62,7 +38,7 @@ html, body {
   bottom: 5px;
   background: rgba(50, 50, 50, 0.9);
   border-radius: 8px;
-  filter: blur(1.5px);
+  filter: blur(2px);  /* 내부 사각형만 blur */
   z-index: 2;
 }
 
@@ -86,7 +62,7 @@ html, body {
   text-overflow: ellipsis;
 }
 
-/* 우측 하단 삼각형 (▼) */
+/* 우측 하단 삼각형 (▼) - 위아래 움직임 + 깜빡임 */
 .dialogue-triangle {
   position: absolute;
   bottom: 12px;
@@ -97,7 +73,20 @@ html, body {
   border-right: 7px solid transparent;
   border-top: 9px solid currentColor;
   z-index: 4;
-  animation: triangle-blink 1.2s ease-in-out infinite;
+  animation: triangle-float 2s ease-in-out infinite, triangle-blink 1.2s ease-in-out infinite;
+}
+
+/* 삼각형 위아래 움직임 */
+@keyframes triangle-float {
+  0%, 20% {
+    transform: translateY(0px);
+  }
+  40%, 60% {
+    transform: translateY(-5px);
+  }
+  80%, 100% {
+    transform: translateY(0px);
+  }
 }
 
 /* 삼각형 깜빡임 */
