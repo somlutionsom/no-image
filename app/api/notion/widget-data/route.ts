@@ -9,6 +9,12 @@ interface WidgetData {
   mainText: string
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { token, databaseId } = await req.json()
@@ -100,7 +106,7 @@ export async function POST(req: NextRequest) {
         mainText: properties['main text']?.rich_text?.[0]?.plain_text || '오늘도 좋은 하루!'
       }
       
-      return NextResponse.json(data)
+      return NextResponse.json(data, { headers: corsHeaders })
     } else {
       // 데이터가 없을 때 기본값 반환
       return NextResponse.json({
@@ -109,14 +115,21 @@ export async function POST(req: NextRequest) {
         energy: 0,
         name: 'No Data',
         mainText: '데이터를 입력해주세요'
-      })
+      }, { headers: corsHeaders })
     }
   } catch (error: any) {
     console.error('Widget data error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch widget data: ' + error.message },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     )
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  })
 }
 
