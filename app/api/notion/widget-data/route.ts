@@ -22,101 +22,138 @@ export async function POST(req: NextRequest) {
     if (!token || !databaseId) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       )
     }
     
     const notion = new Client({ auth: token })
     
-    // 데이터베이스 정보 먼저 조회해서 Date 속성이 있는지 확인
-    let response
-    try {
-      const dbInfo = await notion.databases.retrieve({ database_id: databaseId })
-      const hasDateProperty = 'Date' in (dbInfo as any).properties
-      
-      if (hasDateProperty) {
-        // Date 속성이 있으면 오늘 날짜로 필터링
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        
-        response = await notion.databases.query({
-          database_id: databaseId,
-          filter: {
-            and: [
-              {
-                property: 'Date',
-                date: {
-                  on_or_after: today.toISOString()
-                }
-              },
-              {
-                property: 'Date',
-                date: {
-                  before: tomorrow.toISOString()
-                }
-              }
-            ]
-          },
-          page_size: 1
-        })
-        
-        // 오늘 데이터가 없으면 최근 데이터 조회
-        if (response.results.length === 0) {
-          response = await notion.databases.query({
-            database_id: databaseId,
-            sorts: [{
-              property: 'Date',
-              direction: 'descending'
-            }],
-            page_size: 1
-          })
-        }
-      } else {
-        // Date 속성이 없으면 그냥 최근 데이터 1개 조회
-        response = await notion.databases.query({
-          database_id: databaseId,
-          page_size: 1
-        })
-      }
-    } catch {
-      // 오류 발생 시 필터 없이 조회
-      response = await notion.databases.query({
+    // 데이터베이스 정보 먼저 조회
+    const dbInfo = await notion.databases.retrieve({ database_id: databaseId })
+    const hasDateProperty = 'Date' in (dbInfo as any).properties
+    
+    if (!hasDateProperty) {
+      // Date 속성이 없으면 최근 데이터만 조회
+      const response = await notion.databases.query({
         database_id: databaseId,
         page_size: 1
       })
+      
+      if (response.results.length > 0) {
+        const page: any = response.results[0]
+        const properties = page.properties
+        
+        const data: WidgetData = {
+          profileImage: 
+            properties['profile image']?.files?.[0]?.file?.url || 
+            properties['profile image']?.files?.[0]?.external?.url || 
+            null,
+          sleep: 
+            properties.sleep?.formula?.string || 
+            (properties.sleep?.formula?.number ? `${properties.sleep.formula.number}H` : '기록하기'),
+          energy: properties.energy?.number || 0,
+          name: properties.name?.rich_text?.[0]?.plain_text || 'Anonymous',
+          mainText: properties['main text']?.rich_text?.[0]?.plain_text || '오늘도 좋은 하루!'
+        }
+        
+        return NextResponse.json(data, { headers: corsHeaders })
+      }
     }
     
-    if (response.results.length > 0) {
-      const page: any = response.results[0]
-      const properties = page.properties
+    // 1. 오늘 날짜 데이터 조회 (에너지, 수면용)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    
+    const todayResponse = await notion.databases.query({
+      database_id: databaseId,
+      filter: {
+        and: [
+          {
+            property: 'Date',
+            date: {
+              on_or_after: today.toISOString()
+            }
+          },
+          {
+            property: 'Date',
+            date: {
+              before: tomorrow.toISOString()
+            }
+          }
+        ]
+      },
+      page_size: 1
+    })
+    
+    // 2. 최근 데이터 조회 (프로필 사진, 닉네임, 텍스트용)
+    const recentResponse = await notion.databases.query({
+      database_id: databaseId,
+      sorts: [{
+        property: 'Date',
+        direction: 'descending'
+      }],
+      page_size: 10  // 최근 10개 중에서 데이터가 있는 것 찾기
+    })
+    
+    // 프로필 사진, 닉네임, 텍스트는 최근 데이터에서 찾기
+    let profileImage = null
+    let name = 'Anonymous'
+    let mainText = '오늘도 좋은 하루!'
+    
+    for (const page of recentResponse.results) {
+      const props = (page as any).properties
       
-      // 데이터 추출 (속성 이름에 정확히 맞춰서)
-      const data: WidgetData = {
-        profileImage: 
-          properties['profile image']?.files?.[0]?.file?.url || 
-          properties['profile image']?.files?.[0]?.external?.url || 
-          null,
-        sleep: 
-          properties.sleep?.formula?.string || 
-          (properties.sleep?.formula?.number ? `${properties.sleep.formula.number}H` : '0H'),
-        energy: properties.energy?.number || 0,
-        name: properties.name?.rich_text?.[0]?.plain_text || 'Anonymous',
-        mainText: properties['main text']?.rich_text?.[0]?.plain_text || '오늘도 좋은 하루!'
+      if (!profileImage && props['profile image']?.files?.[0]) {
+        profileImage = props['profile image']?.files?.[0]?.file?.url || 
+                      props['profile image']?.files?.[0]?.external?.url
       }
       
-      return NextResponse.json(data, { headers: corsHeaders })
-    } else {
-      // 데이터가 없을 때 기본값 반환
-      return NextResponse.json({
-        profileImage: null,
-        sleep: '0H',
-        energy: 0,
-        name: 'No Data',
-        mainText: '데이터를 입력해주세요'
-      }, { headers: corsHeaders })
+      if (name === 'Anonymous' && props.name?.rich_text?.[0]?.plain_text) {
+        name = props.name.rich_text[0].plain_text
+      }
+      
+      if (mainText === '오늘도 좋은 하루!' && props['main text']?.rich_text?.[0]?.plain_text) {
+        mainText = props['main text'].rich_text[0].plain_text
+      }
+      
+      // 모든 데이터를 찾았으면 중단
+      if (profileImage && name !== 'Anonymous' && mainText !== '오늘도 좋은 하루!') {
+        break
+      }
     }
+    
+    // 에너지와 수면은 오늘 데이터에서 가져오기
+    let sleep = '기록하기'
+    let energy = 0
+    
+    if (todayResponse.results.length > 0) {
+      const todayProps = (todayResponse.results[0] as any).properties
+      
+      const sleepData = todayProps.sleep?.formula?.string || 
+                       (todayProps.sleep?.formula?.number ? `${todayProps.sleep.formula.number}H` : null)
+      const energyData = todayProps.energy?.number
+      
+      // 데이터가 실제로 있는 경우에만 사용
+      if (sleepData && sleepData !== '0H') {
+        sleep = sleepData
+      }
+      if (energyData && energyData > 0) {
+        energy = energyData
+      }
+    }
+    
+    const data: WidgetData = {
+      profileImage,
+      sleep,
+      energy,
+      name,
+      mainText
+    }
+    
+    return NextResponse.json(data, { headers: corsHeaders })
+    
   } catch (error: any) {
     console.error('Widget data error:', error)
     return NextResponse.json(

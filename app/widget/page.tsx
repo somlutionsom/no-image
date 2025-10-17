@@ -655,7 +655,7 @@ function WidgetContent() {
                     style={{ imageRendering: 'pixelated' }}
                   />
                   <span className="stat-value" data-testid="energy-value" style={{ color: theme.text }}>
-                    {Math.round((data.energy || 0) * 20)}%
+                    {data.energy > 0 ? `${Math.round(data.energy * 20)}%` : '기록하기'}
                   </span>
                 </div>
                 {/* 수면시간 */}
@@ -668,7 +668,7 @@ function WidgetContent() {
                     style={{ imageRendering: 'pixelated' }}
                   />
                   <span className="stat-value" data-testid="sleep-value" style={{ color: theme.text }}>
-                    {data.sleep || '0H'}
+                    {data.sleep || '기록하기'}
                   </span>
                 </div>
               </div>
