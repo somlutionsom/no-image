@@ -32,6 +32,13 @@ type LogEntry = {
 }
 
 const THEME_COLORS: Record<string, ThemeConfig> = {
+  pink: {
+    bg: 'transparent',
+    accent: '#D9B3FF',
+    text: '#2C2C2C',
+    border: '#D9B3FF',
+    secondary: '#F8F0FF'
+  },
   purple: {
     bg: 'transparent',
     accent: '#D4B5FF',
@@ -52,13 +59,6 @@ const THEME_COLORS: Record<string, ThemeConfig> = {
     text: '#000000',
     border: '#404040',
     secondary: '#E0E0E0'
-  },
-  'pastel-purple': {
-    bg: 'transparent',
-    accent: '#D9B3FF',
-    text: '#2C2C2C',
-    border: '#D9B3FF',
-    secondary: '#F8F0FF'
   }
 }
 
@@ -136,7 +136,7 @@ function WidgetContent() {
   const searchParams = useSearchParams()
   const [data, setData] = useState<WidgetData | null>(null)
   const [config, setConfig] = useState<any>(null)
-  const [currentTheme, setCurrentTheme] = useState('purple')
+  const [currentTheme, setCurrentTheme] = useState('pink')
   const [currentTime, setCurrentTime] = useState('')
   const [currentDate, setCurrentDate] = useState('')
   const [loading, setLoading] = useState(true)
@@ -182,7 +182,7 @@ function WidgetContent() {
         })
 
         setConfig(cfg)
-        setCurrentTheme(cfg.theme || 'purple')
+        setCurrentTheme(cfg.theme || 'pink')
         scheduleWork(() => fetchData(cfg))
         safeStorage.setItem('last-config', JSON.stringify(cfg))
       } catch (err: any) {
@@ -209,7 +209,7 @@ function WidgetContent() {
           meta: { theme: parsed.theme },
         })
         setConfig(parsed)
-        setCurrentTheme(parsed.theme || 'purple')
+        setCurrentTheme(parsed.theme || 'pink')
         scheduleWork(() => fetchData(parsed))
       } catch (err) {
         console.warn('Saved config parse failed:', err)
@@ -452,10 +452,10 @@ function WidgetContent() {
   // 테마별 아이콘 경로 반환 함수
   const getThemedIcon = useCallback((iconName: string) => {
     const themePrefix: Record<string, string> = {
+      'pink': 'purple_',
       'purple': 'purple_',
       'blue': 'blue_',
-      'mono': 'black_',
-      'pastel-purple': 'purple_'
+      'mono': 'black_'
     }
     
     const prefix = themePrefix[currentTheme] || ''
