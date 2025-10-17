@@ -484,18 +484,16 @@ function WidgetContent() {
 
   return (
     <div style={{ 
-      minHeight: '100%', 
+      minHeight: '100vh', 
+      height: '100vh',
       backgroundColor: theme.bg, 
       display: 'flex', 
-      alignItems: 'flex-start',  // 모바일 WebView 호환성: center → flex-start
+      alignItems: 'flex-start',
       justifyContent: 'center',
-      paddingTop: `calc(0.5rem + ${safeAreaInsets.top}px)`,
-      paddingBottom: `calc(0.5rem + ${safeAreaInsets.bottom}px)`,
-      paddingLeft: '0.5rem',
-      paddingRight: '0.5rem',
+      padding: 0,
+      margin: 0,
       width: '100%',
-      overflowX: 'hidden',
-      overflowY: 'auto',  // 스크롤 허용
+      overflow: 'hidden',  // 🎯 스크롤바 완전 제거
       WebkitOverflowScrolling: 'touch',
     }}>
       <div className="widget-scale-wrapper">
