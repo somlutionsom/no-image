@@ -2,8 +2,8 @@
    Widget Container (위젯 전체 컨테이너)
    ======================================== */
 .widget-container {
-  width: min(350px, 100%);        /* 🎯 전체 너비 */
-  min-height: 450px;   /* 🎯 최소 높이 (모바일 WebView 호환성) */
+  width: min(420px, 100%);        /* 🎯 전체 너비 (350px → 420px, window 크기와 동일) */
+  min-height: 540px;   /* 🎯 최소 높이 (450px → 540px, window 크기와 동일) */
   height: auto;        /* 🎯 컨텐츠에 맞게 자동 조절 */
   cursor: pointer;
   overflow: visible;   /* 🎯 window 배경 라운드 보이게 */
