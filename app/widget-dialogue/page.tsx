@@ -19,26 +19,26 @@ const THEME_COLORS: Record<string, ThemeConfig> = {
   pink: {
     text: '#FFFFFF',              // 흰색 고정
     triangle: '#FFFFFF',          // 흰색 고정
-    outerBg: 'rgba(255, 185, 217, 0.8)',    // 파스텔 핑크 (외부)
-    innerBg: 'rgba(255, 150, 200, 0.8)'     // 더 어두운 핑크 (내부, opacity 80%)
+    outerBg: 'rgba(255, 185, 217, 0.85)',    // 파스텔 핑크 (외부)
+    innerBg: 'rgba(255, 150, 200, 0.6)'      // 더 어두운 핑크 (내부, opacity 60%)
   },
   purple: {
     text: '#FFFFFF',              // 흰색 고정
     triangle: '#FFFFFF',          // 흰색 고정
-    outerBg: 'rgba(212, 181, 255, 0.8)',    // 파스텔 퍼플 (외부)
-    innerBg: 'rgba(180, 140, 255, 0.8)'     // 더 어두운 퍼플 (내부, opacity 80%)
+    outerBg: 'rgba(212, 181, 255, 0.85)',    // 파스텔 퍼플 (외부)
+    innerBg: 'rgba(180, 140, 255, 0.6)'      // 더 어두운 퍼플 (내부, opacity 60%)
   },
   blue: {
     text: '#FFFFFF',              // 흰색 고정
     triangle: '#FFFFFF',          // 흰색 고정
-    outerBg: 'rgba(181, 212, 255, 0.8)',    // 파스텔 블루 (외부)
-    innerBg: 'rgba(140, 180, 255, 0.8)'     // 더 어두운 블루 (내부, opacity 80%)
+    outerBg: 'rgba(181, 212, 255, 0.85)',    // 파스텔 블루 (외부)
+    innerBg: 'rgba(140, 180, 255, 0.6)'      // 더 어두운 블루 (내부, opacity 60%)
   },
   mono: {
     text: '#FFFFFF',              // 흰색 고정
     triangle: '#FFFFFF',          // 흰색 고정
-    outerBg: 'rgba(100, 100, 100, 0.8)',    // 회색 (외부)
-    innerBg: 'rgba(120, 120, 120, 0.8)'     // 더 어두운 회색 (내부, opacity 80%)
+    outerBg: 'rgba(60, 60, 60, 0.9)',        // 진한 회색 (외부, 더 진하게)
+    innerBg: 'rgba(100, 100, 100, 0.6)'      // 밝은 회색 (내부, opacity 60%)
   }
 }
 
