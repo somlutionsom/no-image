@@ -122,19 +122,24 @@ const appendLog = (
 }
 
 const sendRemoteLog = async (payload: LogEntry) => {
-  try {
-    await fetch(LOG_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...getDebugHeaders() },
-      body: JSON.stringify({
-        log: payload,
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-      }),
-      keepalive: true,
-    })
-  } catch (err) {
-    console.warn('Remote log 실패:', err)
-  }
+  // 무한 루프 방지: 디버그 로깅 임시 비활성화
+  // ERR_CONNECTION_CLOSED 이슈 해결 후 재활성화 예정
+  return
+  
+  // try {
+  //   await fetch(LOG_ENDPOINT, {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json', ...getDebugHeaders() },
+  //     body: JSON.stringify({
+  //       log: payload,
+  //       userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+  //     }),
+  //     keepalive: true,
+  //   })
+  // } catch (err) {
+  //   // console.warn 호출 시 무한 루프 발생 가능성 있음
+  //   // 에러는 조용히 무시
+  // }
 }
 
 function WidgetContent() {
