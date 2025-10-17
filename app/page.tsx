@@ -5,7 +5,7 @@ import OnboardingFlow from './components/OnboardingFlow'
 import WidgetPreview from './components/WidgetPreview'
 
 export default function Home() {
-  const [widgetUrl, setWidgetUrl] = useState<string>('')
+  const [widgetUrls, setWidgetUrls] = useState({ profile: '', dialogue: '' })
   const [config, setConfig] = useState<any>(null)
 
   return (
@@ -17,7 +17,7 @@ export default function Home() {
             ✨ Notion Pixel Widget ✨
           </h1>
           <p className="text-gray-dark/70">
-            노션과 연동되는 귀여운 픽셀 프로필 위젯을 만들어보세요!
+            노션과 연동되는 귀여운 픽셀 위젯을 만들어보세요!
           </p>
         </div>
 
@@ -25,15 +25,15 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           <div>
             <OnboardingFlow 
-              onComplete={(url: string, cfg: any) => {
-                setWidgetUrl(url)
+              onComplete={(profileUrl: string, dialogueUrl: string, cfg: any) => {
+                setWidgetUrls({ profile: profileUrl, dialogue: dialogueUrl })
                 setConfig(cfg)
               }} 
             />
           </div>
           
           <div>
-            <WidgetPreview config={config} url={widgetUrl} />
+            <WidgetPreview config={config} urls={widgetUrls} />
           </div>
         </div>
 

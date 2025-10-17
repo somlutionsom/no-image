@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 
 interface OnboardingFlowProps {
-  onComplete: (url: string, config: any) => void
+  onComplete: (profileUrl: string, dialogueUrl: string, config: any) => void
 }
 
 export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
@@ -15,7 +15,7 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const [selectedDb, setSelectedDb] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [widgetUrl, setWidgetUrl] = useState('')
+  const [widgetUrls, setWidgetUrls] = useState({ profile: '', dialogue: '' })
 
   // 미리보기 업데이트 함수
   const updatePreview = (dbId?: string) => {
@@ -34,8 +34,11 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       let base64 = btoa(String.fromCharCode(...bytes));
       base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
       
-      const url = `${window.location.origin}/widget?config=${base64}`
-      onComplete(url, previewConfig)
+      // 2개 위젯 URL 생성
+      const profileUrl = `${window.location.origin}/widget?config=${base64}`
+      const dialogueUrl = `${window.location.origin}/widget-dialogue?config=${base64}`
+      
+      onComplete(profileUrl, dialogueUrl, previewConfig)
     }
   }
 
@@ -85,9 +88,12 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     let base64 = btoa(String.fromCharCode(...bytes));
     base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     
-    const url = `${window.location.origin}/widget?config=${base64}`
-    setWidgetUrl(url)
-    onComplete(url, config)
+    // 2개 위젯 URL 생성
+    const profileUrl = `${window.location.origin}/widget?config=${base64}`
+    const dialogueUrl = `${window.location.origin}/widget-dialogue?config=${base64}`
+    
+    setWidgetUrls({ profile: profileUrl, dialogue: dialogueUrl })
+    onComplete(profileUrl, dialogueUrl, config)
     setStep(3)
   }
 
@@ -218,30 +224,55 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             <h2 className="text-2xl font-bold text-gray-dark">
               위젯 생성 완료!
             </h2>
+            <p className="text-sm text-gray-600 mt-2">2개의 위젯이 생성되었습니다</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-bold mb-2">
-              📋 위젯 URL
+          {/* 프로필 위젯 URL */}
+          <div className="border-2 border-pink-200 bg-pink-50 p-4 rounded-lg">
+            <label className="block text-sm font-bold mb-2 text-pink-600">
+              🎮 1. 프로필 위젯
             </label>
-            <div className="bg-gray-100 p-3 rounded-md break-all">
-              <code className="text-xs">{widgetUrl}</code>
+            <div className="bg-white p-3 rounded-md break-all mb-3">
+              <code className="text-xs">{widgetUrls.profile}</code>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => copyToClipboard(widgetUrls.profile)}
+                className="flex-1 bg-pink-500 text-white p-2 rounded-md pixel-button hover:bg-pink-600 transition-colors text-sm"
+              >
+                📋 복사
+              </button>
+              <button
+                onClick={() => window.open(widgetUrls.profile, '_blank', 'width=370,height=470')}
+                className="flex-1 bg-pink-400 text-white p-2 rounded-md pixel-button hover:bg-pink-500 transition-colors text-sm"
+              >
+                🔗 열기
+              </button>
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => copyToClipboard(widgetUrl)}
-              className="flex-1 bg-gray-dark text-white p-3 rounded-md pixel-button hover:bg-gray-700 transition-colors"
-            >
-              📋 URL 복사하기
-            </button>
-            <button
-              onClick={() => window.open(widgetUrl, '_blank', 'width=370,height=470')}
-              className="flex-1 bg-pink-medium text-white p-3 rounded-md pixel-button hover:bg-pink-light transition-colors"
-            >
-              🔗 새창에서 열기
-            </button>
+          {/* 대화창 위젯 URL */}
+          <div className="border-2 border-purple-200 bg-purple-50 p-4 rounded-lg">
+            <label className="block text-sm font-bold mb-2 text-purple-600">
+              💬 2. 대화창 위젯
+            </label>
+            <div className="bg-white p-3 rounded-md break-all mb-3">
+              <code className="text-xs">{widgetUrls.dialogue}</code>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => copyToClipboard(widgetUrls.dialogue)}
+                className="flex-1 bg-purple-500 text-white p-2 rounded-md pixel-button hover:bg-purple-600 transition-colors text-sm"
+              >
+                📋 복사
+              </button>
+              <button
+                onClick={() => window.open(widgetUrls.dialogue, '_blank', 'width=300,height=130')}
+                className="flex-1 bg-purple-400 text-white p-2 rounded-md pixel-button hover:bg-purple-500 transition-colors text-sm"
+              >
+                🔗 열기
+              </button>
+            </div>
           </div>
 
           <div className="bg-blue-50 border-2 border-blue-200 p-3 rounded-md">
