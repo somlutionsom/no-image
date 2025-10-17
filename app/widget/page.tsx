@@ -143,7 +143,6 @@ function WidgetContent() {
   const [config, setConfig] = useState<any>(null)
   const [currentTheme, setCurrentTheme] = useState('pink')
   const [currentTime, setCurrentTime] = useState('')
-  const [currentDate, setCurrentDate] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [safeAreaInsets, setSafeAreaInsets] = useState({ top: 0, bottom: 0 })
@@ -232,11 +231,6 @@ function WidgetContent() {
         minute: '2-digit',
         hour12: true 
       }).toLowerCase()) // pm, am 소문자로
-      setCurrentDate(now.toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).replace(/\./g, '. ').replace(/\. $/, '').trim())
     }, 1000)
 
     return () => clearInterval(timer)
@@ -504,7 +498,8 @@ function WidgetContent() {
       overflowY: 'auto',  // 스크롤 허용
       WebkitOverflowScrolling: 'touch',
     }}>
-      <div 
+      <div className="widget-scale-wrapper">
+        <div 
         className="widget-container"
         onClick={cycleTheme}
         style={{ 
@@ -566,7 +561,8 @@ function WidgetContent() {
               data-testid="close-btn"
               style={{ color: theme.accent }}
             >×</span>
-          </div>
+        </div>
+      </div>
         </div>
         
         {/* 시간 표시 */}
@@ -734,12 +730,6 @@ function WidgetContent() {
                 </div>
               </div>
               
-              {/* 날짜 표시 */}
-              <div className="date-display" data-testid="date">
-                <span className="date-text" data-testid="date-text" style={{ color: theme.dateColor }}>
-                  {currentDate}
-                </span>
-              </div>
             </div>
 
             {/* 새로고침 버튼 (숨김) */}
