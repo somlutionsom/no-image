@@ -19,6 +19,8 @@
   flex-direction: column;
   background-color: transparent;
   overflow: visible;
+  transform: scale(0.8);  /* 🎯 내부 요소 80% 축소 */
+  transform-origin: top center;  /* 🎯 위쪽 중앙 기준으로 축소 */
 }
 
 /* ========================================
