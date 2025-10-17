@@ -21,6 +21,7 @@ interface ThemeConfig {
   text: string
   border: string
   secondary: string
+  dateColor: string  // 🎯 날짜 폰트 색상
 }
 
 type LogEntry = {
@@ -37,28 +38,32 @@ const THEME_COLORS: Record<string, ThemeConfig> = {
     accent: '#FFB9D9',
     text: '#2C2C2C',
     border: '#FFB9D9',
-    secondary: '#FFE5F0'
+    secondary: '#FFE5F0',
+    dateColor: '#FF85B8'  // 🎯 핑크 (채도↑ 명도↓)
   },
   purple: {
     bg: 'transparent',
     accent: '#D4B5FF',
     text: '#2C2C2C',
     border: '#D4B5FF',
-    secondary: '#F3F3F3'
+    secondary: '#F0E5FF',  // 🎯 파스텔 퍼플 배경
+    dateColor: '#A070FF'   // 🎯 퍼플 (채도↑ 명도↓)
   },
   blue: {
     bg: 'transparent',
     accent: '#B5D4FF',
     text: '#2C2C2C',
     border: '#B5D4FF',
-    secondary: '#F3F3F3'
+    secondary: '#E5F0FF',  // 🎯 파스텔 블루 배경
+    dateColor: '#5AA0FF'   // 🎯 블루 (채도↑ 명도↓)
   },
   mono: {
     bg: 'transparent',
     accent: '#404040',
     text: '#000000',
     border: '#404040',
-    secondary: '#E0E0E0'
+    secondary: '#E0E0E0',
+    dateColor: '#404040'   // 🎯 모노 (기존 accent와 동일)
   }
 }
 
@@ -505,7 +510,7 @@ function WidgetContent() {
         style={{ 
           fontFamily: 'Galmuri7, Galmuri, monospace',
           backgroundImage: `url(${getThemedWindow()})`,
-          backgroundSize: '420px 540px',
+          backgroundSize: '378px 486px',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
           backgroundColor: 'transparent',
@@ -605,8 +610,8 @@ function WidgetContent() {
                   <Image 
                     src={data.profileImage} 
                     alt="Profile"
-                    width={160}
-                    height={160}
+                    width={176}
+                    height={176}
                     style={{ 
                       imageRendering: 'pixelated',
                       objectFit: 'cover',
@@ -619,8 +624,8 @@ function WidgetContent() {
                   <Image 
                     src="/images/default-profile.png" 
                     alt="Default Profile"
-                    width={160}
-                    height={160}
+                    width={176}
+                    height={176}
                     style={{ 
                       imageRendering: 'pixelated',
                       objectFit: 'cover',
@@ -721,8 +726,8 @@ function WidgetContent() {
                   <Image 
                     src="/images/hearts.png"
                     alt="hearts"
-                    width={32}
-                    height={16}
+                    width={35}
+                    height={18}
                     data-testid="hearts"
                     style={{ imageRendering: 'pixelated' }}
                   />
@@ -731,7 +736,7 @@ function WidgetContent() {
               
               {/* 날짜 표시 */}
               <div className="date-display" data-testid="date">
-                <span className="date-text" data-testid="date-text" style={{ color: theme.text }}>
+                <span className="date-text" data-testid="date-text" style={{ color: theme.dateColor }}>
                   {currentDate}
                 </span>
               </div>

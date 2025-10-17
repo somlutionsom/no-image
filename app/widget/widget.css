@@ -13,7 +13,7 @@
 
 .widget-inner {
   height: 100%;
-  padding: 12px 16px;  /* 🎯 좌우 여백 (상하 12px, 좌우 16px) */
+  padding: 25px 35px 4px 16px;  /* 🎯 패딩 (상25 우35 하4 좌16) */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -37,15 +37,15 @@
   display: flex;
   align-items: center;
   gap: 46px;           /* 🎯 profile 글자와 X 사이 간격 */
-  margin-left: 3px;    /* 🎯 우측 이동 */
+  margin-left: 7px;    /* 🎯 우측 이동 */
 }
 
 .profile-text {
-  font-family: 'Galmuri14', monospace !important; /* 🎯 갈무리14 폰트 */
+  
   font-weight: bold !important;
-  font-size: 12px !important;     /* 🎯 폰트 크기 (19px - 2px) */
-  padding: 0px 10px !important;   /* 🎯 배경 패딩 (상하 0px, 좌우 10px) */
-  border-radius: 14px !important; /* 🎯 둥근 사각형 라운드값 */
+  font-size: 15px !important;     /* 🎯 폰트 크기 (19px - 2px) */
+  padding: 2px 19px !important;   /* 🎯 배경 패딩 (상하 0px, 좌우 10px) */
+  border-radius: 13px !important; /* 🎯 둥근 사각형 라운드값 */
 }
 
 .close-button {
@@ -60,8 +60,9 @@
    ======================================== */
 .time-section {
   display: flex;
+  font-weight: bold !important;
   justify-content: flex-end;  /* 🎯 우측 정렬 */
-  margin-top: 12px;           /* 🎯 타임 뱃지만 아래로 10px 이동 */
+  margin-top: 17px;           /* 🎯 타임 뱃지만 아래로 10px 이동 */
   margin-bottom: 16px;        /* 🎯 원래 아래 여백으로 복원 */
   margin-right: -7px;         /* 🎯 우측 여백 */
 }
@@ -78,16 +79,18 @@
 .profile-stats-section {
   display: flex;
   gap: 24px;              /* 🎯 프로필 이미지와 스탯 사이 간격 */
-  margin-bottom: 77px;    /* 🎯 아래 여백 */
+  margin-top: 20px;       /* 🎯 위쪽 마진 20px */
+  margin-bottom: 85px;    /* 🎯 아래 마진 85px (이미지 2 기준) */
 }
 
 .profile-image-wrapper {
   position: relative;
-  width: 160px;           /* 🎯 고정 너비 */
-  height: 160px;          /* 🎯 고정 높이 */
+  width: 176px;           /* 🎯 고정 너비 (160px × 1.1 = 176px, 10% 증가) */
+  height: 176px;          /* 🎯 고정 높이 (160px × 1.1 = 176px, 10% 증가) */
+  margin-left: 10px;      /* 🎯 우측으로 10px 이동 */
   overflow: hidden;       /* 🎯 이미지가 커져도 영역 밖으로 나가지 않음 */
   flex-shrink: 0;         /* 🎯 영역 크기 고정 (축소 방지) */
-  /* 🎯 프로필 이미지는 Image 컴포넌트의 width/height로 조절 (160x160) */
+  /* 🎯 프로필 이미지는 Image 컴포넌트의 width/height로 조절 (176x176) */
 }
 
 /* 스탯 (배터리/달 아이콘 + 수치) */
@@ -96,7 +99,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 34px;              /* 🎯 에너지와 수면시간 사이 세로 간격 */
-  margin-left: 0px;       /* 🎯 우측 이동 */
+  margin-left: 18px;       /* 🎯 우측 이동 */
   margin-top: 14px;       /* 🎯 아래 이동 (12px + 2px) */
 }
 
@@ -104,7 +107,7 @@
 .sleep-stat {
   display: flex;
   align-items: center;
-  gap: 16px;              /* 🎯 아이콘과 수치 사이 간격 */
+  gap: 20px;              /* 🎯 아이콘과 수치 사이 간격 */
 }
 
 .stat-value {
@@ -117,7 +120,7 @@
    ======================================== */
 .message-name-section {
   position: relative;
-  margin-bottom: 16px;    /* 🎯 아래 여백 */
+  margin-bottom: px;    /* 🎯 아래 여백 */
 }
 
 .message-box-wrapper {
@@ -143,20 +146,21 @@
 
 .message-content {
   flex: 1;                /* 🎯 가로로 늘어남 */
+  max-width: 100%;         /* 🎯 가로 길이 20% 감소 */
   border-radius: 8px;     /* 🎯 메시지 박스 라운드값 */
   padding: 23px;          /* 🎯 메시지 내부 패딩 */
   position: relative;
   background-color: rgba(255, 255, 255, 0.9);
-  min-height: 92px;       /* 🎯 메시지 박스 최소 높이 */
+  min-height: 100px;       /* 🎯 메시지 박스 최소 높이 */
   display: flex;          /* 🎯 꺽쇠와 텍스트를 가로로 배치 */
   align-items: center;    /* 🎯 세로 중앙 정렬 */
   /* 🎯 보더는 inline style로 테마별 색상 적용 (4px solid) */
 }
 
 .message-text {
-  font-size: 13px;        /* 🎯 메시지 텍스트 폰트 크기 */
+  font-size: 15px;        /* 🎯 메시지 텍스트 폰트 크기 */
   line-height: 2.625;     /* 🎯 줄 간격 */
-  margin-left: 5px;       /* 🎯 텍스트만 우측으로 3px 이동 */
+  margin-left: 13px;       /* 🎯 텍스트만 우측으로 3px 이동 */
 }
 
 /* ========================================
@@ -165,11 +169,11 @@
 .name-wrapper {
   position: absolute;
   bottom: 79px;           /* 🎯 아래로 이동 (음수=아래로, 양수=위로) */
-  right: 202px;           /* 🎯 우측 위치 */
+  right: 260px;           /* 🎯 우측 위치 (202px + 30px = 232px, 좌측으로 30px 이동) */
 }
 
 .name-badge {
-  padding: 3px 27px;      /* 🎯 닉네임 배경 패딩 (상하 3px, 좌우 27px) */
+  padding: 3px 26px;      /* 🎯 닉네임 배경 패딩 (상하 3px, 좌우 27px) */
   border-radius: 9999px;  /* 🎯 완전히 둥근 모양 */
   font-size: 17px;        /* 🎯 닉네임 폰트 크기 */
   font-weight: bold;
@@ -183,8 +187,8 @@
    ======================================== */
 .hearts-wrapper {
   position: absolute;
-  bottom: 79px;           /* 🎯 아래로 이동 (음수=아래로, 양수=위로) */
-  right: 8px;             /* 🎯 우측 위치 (닉네임 옆) */
+  bottom: 81px;           /* 🎯 아래로 이동 (음수=아래로, 양수=위로) */
+  right: 14px;            /* 🎯 우측 위치 (8px + 5px = 13px, 좌측으로 5px 이동) */
 }
 
 .hearts-group {
@@ -198,7 +202,7 @@
 .date-display {
   position: absolute;
   top: -26px;             /* 🎯 위로 이동 (2px 더 위로) */
-  right: 132px;           /* 🎯 우측 위치 (4px 좌측으로) */
+  right: 190px;           /* 🎯 우측 위치 (132px + 30px = 162px, 좌측으로 30px 이동) */
 }
 
 .date-text {
