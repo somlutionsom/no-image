@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    // 이미지 최적화 비활성화 (Vercel 한도 절약)
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
