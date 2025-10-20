@@ -9,7 +9,27 @@ const corsHeaders = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, databaseId, completedCount, totalCount, mood, date } = await req.json()
+    // Body 파싱 안전 처리
+    let token = '' as string
+    let databaseId = '' as string
+    let completedCount = 0 as number
+    let totalCount = 0 as number
+    let mood = '' as string
+    let date = new Date().toISOString()
+    try {
+      const raw = await req.text()
+      if (raw && raw.trim().length > 0) {
+        const parsed = JSON.parse(raw)
+        token = parsed.token || ''
+        databaseId = parsed.databaseId || ''
+        completedCount = parsed.completedCount || 0
+        totalCount = parsed.totalCount || 0
+        mood = parsed.mood || ''
+        date = parsed.date || new Date().toISOString()
+      }
+    } catch (e) {
+      // 무시하고 아래 검증으로 처리
+    }
 
     if (!token || !databaseId) {
       return NextResponse.json(

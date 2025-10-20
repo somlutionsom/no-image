@@ -416,78 +416,143 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
+  padding-top: 8px;
+  width: 100%;
   height: 100%;
-  padding: 13px;
-  padding-top: 20px;
-  background: transparent;
+}
+
+.report-container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+
+/* 좌측: 통계 영역 */
+.report-left {
+  flex: 0 0 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .report-title {
-  font-size: 11px;
+  font-size: 8px;
   font-weight: bold;
   color: hsl(220 20% 30%);
+  letter-spacing: 0.3px;
   text-align: center;
+  margin-bottom: 4px;
   user-select: none;
-  margin-bottom: 3px;
 }
 
 .report-stats {
-  text-align: center;
-  font-size: 10px;
-  line-height: 1.6;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 4px;
-  border: 1px solid hsl(220 20% 80%);
-  color: hsl(220 20% 30%);
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+  font-size: 7px;
+  color: hsl(220 20% 40%);
+  background: hsl(220 20% 95%);
+  padding: 6px;
+  border-radius: 3px;
+  border: 1px solid hsl(220 20% 85%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.report-stats .stat-value {
   font-weight: bold;
+  color: hsl(220 20% 20%);
+  margin-bottom: 4px;
 }
 
 .report-buttons {
   display: flex;
-  gap: 6px;
-  margin-top: 3px;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
 }
 
 .report-btn {
   padding: 4px 8px;
-  font-size: 8px;
-  border-radius: 4px;
-  background: hsl(200 30% 88%);
+  font-size: 7px;
+  border-radius: 3px;
+  background: hsl(220 20% 90%);
   color: hsl(220 20% 30%);
   border: 1px solid hsl(220 20% 80%);
   cursor: pointer;
   font-weight: bold;
   transition: all 0.2s ease;
   user-select: none;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   font-family: 'Galmuri11', 'Pretendard', sans-serif;
-  letter-spacing: 0.5px;
-  height: 22px;
+  letter-spacing: 0.3px;
 }
 
 .report-btn:hover {
-  transform: none;
-  background: hsl(210 45% 90%);
-  opacity: 0.8;
+  background: hsl(220 20% 85%);
+  transform: scale(1.02);
 }
 
 .report-btn:active {
-  transform: translateY(1px);
+  transform: scale(0.98);
 }
 
 .report-btn.home-btn {
   background: hsl(340 100% 88%);
-  color: hsl(220 20% 30%);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
-.report-btn.home-btn:hover {
-  background: hsl(340 100% 88%);
-  opacity: 0.8;
+/* 우측: 아이템 그리드 */
+.report-right {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 2px;
+}
+
+.item-slot {
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, hsl(210 30% 96%) 0%, hsl(210 20% 92%) 100%);
+  border: 2px solid hsl(210 20% 75%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.item-slot.empty {
+  background: linear-gradient(135deg, hsl(220 10% 95%) 0%, hsl(220 10% 90%) 100%);
+  border-color: hsl(220 10% 82%);
+}
+
+.item-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* 스크롤바 스타일 */
+.report-right::-webkit-scrollbar {
+  width: 4px;
+}
+
+.report-right::-webkit-scrollbar-track {
+  background: hsl(220 10% 90%);
+  border-radius: 2px;
+}
+
+.report-right::-webkit-scrollbar-thumb {
+  background: hsl(220 20% 70%);
+  border-radius: 2px;
+}
+
+.report-right::-webkit-scrollbar-thumb:hover {
+  background: hsl(220 20% 60%);
 }
 
 /* 시작 화면 */

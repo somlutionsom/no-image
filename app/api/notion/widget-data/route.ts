@@ -18,7 +18,19 @@ const corsHeaders = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, databaseId } = await req.json()
+    // Body 파싱 안전 처리 (빈 바디/잘못된 JSON 대비)
+    let token = '' as string
+    let databaseId = '' as string
+    try {
+      const raw = await req.text()
+      if (raw && raw.trim().length > 0) {
+        const parsed = JSON.parse(raw)
+        token = parsed.token || ''
+        databaseId = parsed.databaseId || ''
+      }
+    } catch (e) {
+      // 무시하고 아래의 필수값 검증으로 처리
+    }
     
     if (!token || !databaseId) {
       return NextResponse.json(

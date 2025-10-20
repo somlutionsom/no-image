@@ -56,6 +56,7 @@ function RoutinePlayerContent() {
   const [remainingSeconds, setRemainingSeconds] = useState(0)
   const [mood, setMood] = useState('')
   const [completedCount, setCompletedCount] = useState(0)
+  const [completedRoutines, setCompletedRoutines] = useState<Array<{name: string, emoji: string}>>([])
   const timerRef = useRef<number | null>(null)
   const [currentTheme, setCurrentTheme] = useState<string>('pink')
 
@@ -123,6 +124,10 @@ function RoutinePlayerContent() {
           
           // 루틴 완료 처리
           if (config && currentRoutineIndex < config.routines.length - 1) {
+            // 현재 루틴을 완료 목록에 추가
+            const currentRoutine = config.routines[currentRoutineIndex]
+            setCompletedRoutines(prev => [...prev, { name: currentRoutine.name, emoji: currentRoutine.emoji }])
+            
             // 다음 루틴으로
             const nextRoutineDuration = config.routines[currentRoutineIndex + 1].duration || 1
             console.log('Moving to next routine:', currentRoutineIndex + 1, 'duration:', nextRoutineDuration)
@@ -133,6 +138,12 @@ function RoutinePlayerContent() {
             
             return 0 // 임시로 0 반환 (곧 업데이트됨)
           } else {
+            // 마지막 루틴도 완료 목록에 추가
+            if (config) {
+              const currentRoutine = config.routines[currentRoutineIndex]
+              setCompletedRoutines(prev => [...prev, { name: currentRoutine.name, emoji: currentRoutine.emoji }])
+            }
+            
             // 모든 루틴 완료
             console.log('All routines completed')
             setCompletedCount(c => c + 1)
@@ -166,6 +177,7 @@ function RoutinePlayerContent() {
     setRemainingSeconds(firstRoutineDuration * 60)
     setGameState('playing')
     setCompletedCount(0)
+    setCompletedRoutines([]) // 완료 목록 초기화
   }
 
   const pauseRoutine = () => {
@@ -179,6 +191,11 @@ function RoutinePlayerContent() {
   const skipRoutine = () => {
     if (!config) return
     
+    // 현재 루틴을 완료 목록에 추가
+    const currentRoutine = config.routines[currentRoutineIndex]
+    setCompletedRoutines(prev => [...prev, { name: currentRoutine.name, emoji: currentRoutine.emoji }])
+    setCompletedCount(prev => prev + 1)
+    
     if (currentRoutineIndex < config.routines.length - 1) {
       const nextRoutineDuration = config.routines[currentRoutineIndex + 1].duration || 1
       setCurrentRoutineIndex(prev => prev + 1)
@@ -189,6 +206,11 @@ function RoutinePlayerContent() {
   }
 
   const completeRoutine = () => {
+    if (!config) return
+    
+    // 현재 루틴을 완료 목록에 추가
+    const currentRoutine = config.routines[currentRoutineIndex]
+    setCompletedRoutines(prev => [...prev, { name: currentRoutine.name, emoji: currentRoutine.emoji }])
     setCompletedCount(prev => prev + 1)
     setGameState('mood')
   }
@@ -449,34 +471,56 @@ function RoutinePlayerContent() {
             {/* Report 상태: 완료 리포트 */}
             {gameState === 'report' && (
               <div className="completion-report">
-                <div className="report-title">
-                  🗂️ ROUTINE REPORT
-                </div>
-                
-                <div className="report-stats">
-                  <div>☑️ 완료: {completedCount} / {config.routines.length}</div>
-                  <div>❤️ 만족도: {mood}</div>
-                </div>
+                <div className="report-container">
+                  {/* 좌측: 통계 */}
+                  <div className="report-left">
+                    <div className="report-title">
+                      🗂️ ROUTINE REPORT
+                    </div>
+                    
+                    <div className="report-stats">
+                      <div>☑️ 완료</div>
+                      <div className="stat-value">{completedCount} / {config.routines.length}</div>
+                      <div>❤️ 만족도</div>
+                      <div className="stat-value">{mood}</div>
+                    </div>
 
-                <div className="report-buttons">
-                  <button
-                    onClick={saveToNotion}
-                    className="report-btn"
-                  >
-                    SAVE
-                  </button>
-                  <button
-                    onClick={() => setGameState('idle')}
-                    className="report-btn home-btn"
-                    style={{
-                      background: currentTheme === 'pink' ? 'hsl(340 100% 88%)' :
-                                 currentTheme === 'blue' ? 'hsl(210 100% 88%)' :
-                                 currentTheme === 'purple' ? 'hsl(270 100% 88%)' :
-                                 'hsl(0 0% 85%)'
-                    }}
-                  >
-                    HOME
-                  </button>
+                    <div className="report-buttons">
+                      <button
+                        onClick={saveToNotion}
+                        className="report-btn"
+                      >
+                        SAVE
+                      </button>
+                      <button
+                        onClick={() => setGameState('idle')}
+                        className="report-btn home-btn"
+                        style={{
+                          background: currentTheme === 'pink' ? 'hsl(340 100% 88%)' :
+                                     currentTheme === 'blue' ? 'hsl(210 100% 88%)' :
+                                     currentTheme === 'purple' ? 'hsl(270 100% 88%)' :
+                                     'hsl(0 0% 85%)'
+                        }}
+                      >
+                        HOME
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 우측: 아이템 그리드 */}
+                  <div className="report-right">
+                    <div className="item-grid">
+                      {completedRoutines.map((routine, index) => (
+                        <div key={index} className="item-slot">
+                          <div className="item-icon">{routine.emoji}</div>
+                        </div>
+                      ))}
+                      {/* 빈 슬롯 채우기 (최대 6개까지 표시) */}
+                      {Array.from({ length: Math.max(0, 6 - completedRoutines.length) }).map((_, index) => (
+                        <div key={`empty-${index}`} className="item-slot empty"></div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
