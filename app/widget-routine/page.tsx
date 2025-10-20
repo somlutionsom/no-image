@@ -212,7 +212,16 @@ function RoutinePlayerContent() {
     const currentRoutine = config.routines[currentRoutineIndex]
     setCompletedRoutines(prev => [...prev, { name: currentRoutine.name, emoji: currentRoutine.emoji }])
     setCompletedCount(prev => prev + 1)
-    setGameState('mood')
+    
+    // 다음 루틴이 있으면 계속 진행, 없으면 종료
+    if (currentRoutineIndex < config.routines.length - 1) {
+      const nextRoutineDuration = config.routines[currentRoutineIndex + 1].duration || 1
+      setCurrentRoutineIndex(prev => prev + 1)
+      setRemainingSeconds(nextRoutineDuration * 60)
+      setGameState('playing')
+    } else {
+      setGameState('mood')
+    }
   }
 
   const selectMood = (selectedMood: string) => {
