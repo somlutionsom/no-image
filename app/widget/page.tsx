@@ -742,6 +742,22 @@ function WidgetContent() {
               </div>
               
             </div>
+            
+            {/* 브랜드 워터마크 */}
+            <div style={{
+              width: '100%',
+              textAlign: 'center',
+              marginTop: '-2px',
+              fontSize: '7px',
+              fontWeight: 'bold',
+              letterSpacing: '1.5px',
+              opacity: 0.2,
+              color: theme.text,
+              userSelect: 'none',
+              pointerEvents: 'none'
+            }}>
+              SOMLUTUON
+            </div>
 
             {/* 새로고침 버튼 (숨김) */}
             <button

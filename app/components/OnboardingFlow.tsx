@@ -4,8 +4,14 @@ import { useState } from 'react'
 // crypto-js 대신 브라우저 내장 Base64 사용
 
 
+interface Routine {
+  name: string
+  duration: number
+  emoji: string
+}
+
 interface OnboardingFlowProps {
-  onComplete: (profileUrl: string, dialogueUrl: string, config: any) => void
+  onComplete: (profileUrl: string, dialogueUrl: string, routineUrl: string, config: any) => void
 }
 
 export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
@@ -15,7 +21,12 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const [selectedDb, setSelectedDb] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [widgetUrls, setWidgetUrls] = useState({ profile: '', dialogue: '' })
+  const [widgetUrls, setWidgetUrls] = useState({ profile: '', dialogue: '', routine: '' })
+  const [routines, setRoutines] = useState<Routine[]>([
+    { name: '일기 쓰기', duration: 5, emoji: '📖' },
+    { name: '명상', duration: 10, emoji: '❤️' }
+  ])
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
 
   // 미리보기 업데이트 함수
   const updatePreview = (dbId?: string) => {
@@ -34,11 +45,22 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       let base64 = btoa(String.fromCharCode(...bytes));
       base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
       
-      // 2개 위젯 URL 생성
+      // Routine config 추가
+      const routineConfig = {
+        ...previewConfig,
+        routines
+      }
+      const routineJsonString = JSON.stringify(routineConfig);
+      const routineBytes = new TextEncoder().encode(routineJsonString);
+      let routineBase64 = btoa(String.fromCharCode(...routineBytes));
+      routineBase64 = routineBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+      
+      // 3개 위젯 URL 생성
       const profileUrl = `${window.location.origin}/widget?config=${base64}`
       const dialogueUrl = `${window.location.origin}/widget-dialogue?config=${base64}`
+      const routineUrl = `${window.location.origin}/widget-routine?config=${routineBase64}`
       
-      onComplete(profileUrl, dialogueUrl, previewConfig)
+      onComplete(profileUrl, dialogueUrl, routineUrl, previewConfig)
     }
   }
 
@@ -88,12 +110,23 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
     let base64 = btoa(String.fromCharCode(...bytes));
     base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     
-    // 2개 위젯 URL 생성
+    // Routine config (루틴 정보 포함)
+    const routineConfig = {
+      ...config,
+      routines
+    }
+    const routineJsonString = JSON.stringify(routineConfig);
+    const routineBytes = new TextEncoder().encode(routineJsonString);
+    let routineBase64 = btoa(String.fromCharCode(...routineBytes));
+    routineBase64 = routineBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    
+    // 3개 위젯 URL 생성
     const profileUrl = `${window.location.origin}/widget?config=${base64}`
     const dialogueUrl = `${window.location.origin}/widget-dialogue?config=${base64}`
+    const routineUrl = `${window.location.origin}/widget-routine?config=${routineBase64}`
     
-    setWidgetUrls({ profile: profileUrl, dialogue: dialogueUrl })
-    onComplete(profileUrl, dialogueUrl, config)
+    setWidgetUrls({ profile: profileUrl, dialogue: dialogueUrl, routine: routineUrl })
+    onComplete(profileUrl, dialogueUrl, routineUrl, config)
     setStep(3)
   }
 
@@ -186,6 +219,91 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             </select>
           </div>
 
+          {/* 루틴 입력 섹션 */}
+          <div>
+            <label className="block text-sm font-bold mb-2">
+              🎮 루틴 설정 (Routine Player용)
+            </label>
+            
+            <div className="space-y-2">
+              {routines.map((routine, index) => (
+                <div 
+                  key={index} 
+                  className={`flex gap-2 items-center ${draggedIndex === index ? 'opacity-50' : ''}`}
+                  draggable
+                  onDragStart={() => setDraggedIndex(index)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      const updated = [...routines]
+                      const [removed] = updated.splice(draggedIndex, 1)
+                      updated.splice(index, 0, removed)
+                      setRoutines(updated)
+                    }
+                    setDraggedIndex(null)
+                  }}
+                  onDragEnd={() => setDraggedIndex(null)}
+                >
+                  <div className="cursor-move text-gray-400 hover:text-gray-600">
+                    ⋮⋮
+                  </div>
+                  <input
+                    type="text"
+                    value={routine.emoji}
+                    onChange={(e) => {
+                      const updated = [...routines]
+                      updated[index].emoji = e.target.value
+                      setRoutines(updated)
+                    }}
+                    className="w-12 p-2 border-2 border-gray-300 rounded-md text-center"
+                    placeholder="🎯"
+                  />
+                  <input
+                    type="text"
+                    value={routine.name}
+                    onChange={(e) => {
+                      const updated = [...routines]
+                      updated[index].name = e.target.value
+                      setRoutines(updated)
+                    }}
+                    className="flex-1 p-2 border-2 border-gray-300 rounded-md"
+                    placeholder="루틴 이름"
+                  />
+                  <input
+                    type="number"
+                    value={routine.duration}
+                    onChange={(e) => {
+                      const updated = [...routines]
+                      updated[index].duration = Number(e.target.value)
+                      setRoutines(updated)
+                    }}
+                    className="w-16 p-2 border-2 border-gray-300 rounded-md text-center"
+                    placeholder="분"
+                    min="1"
+                  />
+                  <button
+                    onClick={() => {
+                      const updated = routines.filter((_, i) => i !== index)
+                      setRoutines(updated)
+                    }}
+                    className="px-3 py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
+                  >
+                    -
+                  </button>
+                </div>
+              ))}
+              
+              <button
+                onClick={() => {
+                  setRoutines([...routines, { name: '', duration: 0, emoji: '' }])
+                }}
+                className="w-full p-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:border-pink-medium hover:text-pink-medium transition-colors"
+              >
+                + 루틴 추가
+              </button>
+            </div>
+          </div>
 
           <div className="flex gap-2">
             <button
@@ -212,7 +330,7 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             <h2 className="text-2xl font-bold text-gray-dark">
               위젯 생성 완료!
             </h2>
-            <p className="text-sm text-gray-600 mt-2">2개의 위젯이 생성되었습니다</p>
+            <p className="text-sm text-gray-600 mt-2">3개의 위젯이 생성되었습니다</p>
           </div>
 
           {/* 프로필 위젯 URL */}
@@ -257,6 +375,30 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
               <button
                 onClick={() => window.open(widgetUrls.dialogue, '_blank', 'width=300,height=130')}
                 className="flex-1 bg-purple-400 text-white p-2 rounded-md pixel-button hover:bg-purple-500 transition-colors text-sm"
+              >
+                🔗 열기
+              </button>
+            </div>
+          </div>
+
+          {/* 루틴 플레이어 위젯 URL */}
+          <div className="border-2 border-blue-200 bg-blue-50 p-4 rounded-lg">
+            <label className="block text-sm font-bold mb-2 text-blue-600">
+              🎮 3. 루틴 플레이어 위젯
+            </label>
+            <div className="bg-white p-3 rounded-md break-all mb-3">
+              <code className="text-xs">{widgetUrls.routine}</code>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => copyToClipboard(widgetUrls.routine)}
+                className="flex-1 bg-blue-500 text-white p-2 rounded-md pixel-button hover:bg-blue-600 transition-colors text-sm"
+              >
+                📋 복사
+              </button>
+              <button
+                onClick={() => window.open(widgetUrls.routine, '_blank', 'width=320,height=210')}
+                className="flex-1 bg-blue-400 text-white p-2 rounded-md pixel-button hover:bg-blue-500 transition-colors text-sm"
               >
                 🔗 열기
               </button>

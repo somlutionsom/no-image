@@ -2,7 +2,7 @@
 
 interface WidgetPreviewProps {
   config: any
-  urls: { profile: string; dialogue: string }
+  urls: { profile: string; dialogue: string; routine: string }
 }
 
 export default function WidgetPreview({ config, urls }: WidgetPreviewProps) {
@@ -69,6 +69,28 @@ export default function WidgetPreview({ config, urls }: WidgetPreviewProps) {
             src={urls.dialogue}
             className="w-full h-[130px] border-0"
             title="Dialogue Widget Preview"
+          />
+        </div>
+      </div>
+
+      {/* 루틴 플레이어 위젯 미리보기 */}
+      <div className="bg-white rounded-lg p-4 window-frame">
+        <div className="border-b-2 border-gray-200 pb-2 mb-3">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-400"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+              <div className="w-3 h-3 rounded-full bg-green-400"></div>
+            </div>
+            <span className="text-xs text-blue-600 font-bold">🎮 루틴 플레이어 위젯</span>
+          </div>
+        </div>
+        
+        <div className="bg-gray-50 rounded-md overflow-hidden">
+          <iframe
+            src={urls.routine}
+            className="w-full h-[240px] border-0"
+            title="Routine Widget Preview"
           />
         </div>
       </div>

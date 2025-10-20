@@ -280,6 +280,24 @@ function DialogueContent() {
           }}
           title={praiseLoading ? '로딩 중...' : '클릭하여 다른 칭찬 보기'}
         ></div>
+        
+        {/* 브랜드 워터마크 */}
+        <div style={{
+          position: 'absolute',
+          bottom: '8px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: '7px',
+          fontWeight: 'bold',
+          letterSpacing: '1.5px',
+          opacity: 0.2,
+          color: theme.text,
+          userSelect: 'none',
+          pointerEvents: 'none',
+          zIndex: 1000
+        }}>
+          SOMLUTUON
+        </div>
       </div>
     </div>
   )
